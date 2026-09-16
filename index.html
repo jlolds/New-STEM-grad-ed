@@ -230,8 +230,8 @@
     <h2>Play</h2>
     <div class="tabs">
       <button class="tab active" data-round="1" id="tabBtn1">Round 1 · Grad School</button>
-      <button class="tab" data-round="2" id="tabBtn2" disabled>Round 2 · Postdoc</button>
-      <button class="tab" data-round="3" id="tabBtn3" disabled>Round 3 · Job Market</button>
+      <button class="tab" data-round="2" id="tabBtn2">Round 2 · Postdoc</button>
+      <button class="tab" data-round="3" id="tabBtn3">Round 3 · Job Market</button>
     </div>
 
     <!-- ROUND 1 -->
@@ -552,7 +552,6 @@ function switchTab(n){
   document.getElementById('tabBtn'+n).classList.add('active');
 }
 function finishRound(next){
-  document.getElementById('tabBtn'+next).disabled = false;
   switchTab(next);
 }
 
@@ -728,8 +727,6 @@ function resetGame(){
   render();
   document.getElementById('gameover').classList.remove('show');
 
-  document.getElementById('tabBtn2').disabled = true;
-  document.getElementById('tabBtn3').disabled = true;
   switchTab(1);
 
   [1,2,3].forEach(r => {
