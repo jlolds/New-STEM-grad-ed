@@ -159,7 +159,7 @@
     <div>♥ Wellbeing: <b id="statWellbeing">5</b></div>
     <span class="flagbadge" id="flagBadge">Independent-PI</span>
   </div>
-  <button class="resetbtn" onclick="resetGame()">Reset Game</button>
+  <button id="genbtn1" class="resetbtn">Reset Game</button>
 </div>
 
 <div class="wrap">
@@ -229,9 +229,9 @@
   <section>
     <h2>Play</h2>
     <div class="tabs">
-      <button class="tab active" data-round="1" id="tabBtn1" onclick="switchTab(1)">Round 1 · Grad School</button>
-      <button class="tab" data-round="2" id="tabBtn2" onclick="switchTab(2)" disabled>Round 2 · Postdoc</button>
-      <button class="tab" data-round="3" id="tabBtn3" onclick="switchTab(3)" disabled>Round 3 · Job Market</button>
+      <button class="tab active" data-round="1" id="tabBtn1">Round 1 · Grad School</button>
+      <button class="tab" data-round="2" id="tabBtn2" disabled>Round 2 · Postdoc</button>
+      <button class="tab" data-round="3" id="tabBtn3" disabled>Round 3 · Job Market</button>
     </div>
 
     <!-- ROUND 1 -->
@@ -239,11 +239,11 @@
       <p class="round-intro">Every team works in its own tab below, at the same time. Nobody can see another team's screen. Once all five have locked in, resolve the round together.</p>
 
       <div class="teamtabs">
-        <button class="team-tab active" id="r1-tab-candidate" onclick="selectTeam(1,'candidate')">Candidate</button>
-        <button class="team-tab" id="r1-tab-advisor" onclick="selectTeam(1,'advisor')">PhD Advisor</button>
-        <button class="team-tab" id="r1-tab-postdoc" onclick="selectTeam(1,'postdoc')">Postdoc Mentor</button>
-        <button class="team-tab" id="r1-tab-funding" onclick="selectTeam(1,'funding')">Funding Panel</button>
-        <button class="team-tab" id="r1-tab-hiring" onclick="selectTeam(1,'hiring')">Hiring Committee</button>
+        <button class="team-tab active" id="r1-tab-candidate">Candidate</button>
+        <button class="team-tab" id="r1-tab-advisor">PhD Advisor</button>
+        <button class="team-tab" id="r1-tab-postdoc">Postdoc Mentor</button>
+        <button class="team-tab" id="r1-tab-funding">Funding Panel</button>
+        <button class="team-tab" id="r1-tab-hiring">Hiring Committee</button>
       </div>
       <div class="team-panels">
 
@@ -258,7 +258,7 @@
               <option value="fellowship">Apply for a training fellowship (Funding Panel decides; –1♥ either way)</option>
             </select>
           </div>
-          <button class="primary" onclick="lockTeam(1,'candidate')">Lock In</button>
+          <button id="genbtn2" class="primary">Lock In</button>
         </div>
 
         <div class="team-panel" id="r1-team-advisor">
@@ -273,7 +273,7 @@
           <div class="field"><label>If she applies for the fellowship:</label>
             <select id="r1-adv-fellowship"><option value="" selected disabled>— choose —</option><option value="approve">Approve as pitched</option><option value="condition">Attach a condition (–1♥ for +1★)</option></select>
           </div>
-          <button class="primary" onclick="lockTeam(1,'advisor')">Lock In</button>
+          <button id="genbtn3" class="primary">Lock In</button>
         </div>
 
         <div class="team-panel" id="r1-team-postdoc">
@@ -286,7 +286,7 @@
               <option value="demanding">Demanding — my lab's output comes first</option>
             </select>
           </div>
-          <button class="primary" onclick="lockTeam(1,'postdoc')">Lock In</button>
+          <button id="genbtn4" class="primary">Lock In</button>
         </div>
 
         <div class="team-panel" id="r1-team-funding">
@@ -299,7 +299,7 @@
               <option value="deny">Deny fellowship requests this round</option>
             </select>
           </div>
-          <button class="primary" onclick="lockTeam(1,'funding')">Lock In</button>
+          <button id="genbtn5" class="primary">Lock In</button>
         </div>
 
         <div class="team-panel" id="r1-team-hiring">
@@ -312,16 +312,16 @@
               <option value="output">Prioritize raw publication output</option>
             </select>
           </div>
-          <button class="primary" onclick="lockTeam(1,'hiring')">Lock In</button>
+          <button id="genbtn6" class="primary">Lock In</button>
         </div>
 
       </div>
 
       <div class="resolve-box">
         <p class="status-line" id="r1status">0 of 5 teams have locked in.</p>
-        <button class="primary" id="r1resolveBtn" onclick="resolveRound1()" disabled>Resolve Round 1</button>
+        <button class="primary" id="r1resolveBtn" disabled>Resolve Round 1</button>
         <div class="outcome" id="r1outcome" style="display:none;"></div>
-        <div id="r1continueWrap" style="display:none; margin-top:10px;"><button class="primary" onclick="finishRound(2)">Continue to Round 2 →</button></div>
+        <div id="r1continueWrap" style="display:none; margin-top:10px;"><button id="genbtn7" class="primary">Continue to Round 2 →</button></div>
       </div>
     </div>
 
@@ -330,11 +330,11 @@
       <p class="round-intro">Same as before — everyone locks in independently, then the class resolves together.</p>
 
       <div class="teamtabs">
-        <button class="team-tab active" id="r2-tab-candidate" onclick="selectTeam(2,'candidate')">Candidate</button>
-        <button class="team-tab" id="r2-tab-advisor" onclick="selectTeam(2,'advisor')">PhD Advisor</button>
-        <button class="team-tab" id="r2-tab-postdoc" onclick="selectTeam(2,'postdoc')">Postdoc Mentor</button>
-        <button class="team-tab" id="r2-tab-funding" onclick="selectTeam(2,'funding')">Funding Panel</button>
-        <button class="team-tab" id="r2-tab-hiring" onclick="selectTeam(2,'hiring')">Hiring Committee</button>
+        <button class="team-tab active" id="r2-tab-candidate">Candidate</button>
+        <button class="team-tab" id="r2-tab-advisor">PhD Advisor</button>
+        <button class="team-tab" id="r2-tab-postdoc">Postdoc Mentor</button>
+        <button class="team-tab" id="r2-tab-funding">Funding Panel</button>
+        <button class="team-tab" id="r2-tab-hiring">Hiring Committee</button>
       </div>
       <div class="team-panels">
 
@@ -348,7 +348,7 @@
               <option value="award">Apply for a career-development award (Funding Panel decides; –1♥ either way)</option>
             </select>
           </div>
-          <button class="primary" onclick="lockTeam(2,'candidate')">Lock In</button>
+          <button id="genbtn8" class="primary">Lock In</button>
         </div>
 
         <div class="team-panel" id="r2-team-postdoc">
@@ -363,7 +363,7 @@
           <div class="field"><label>If she applies for the career award:</label>
             <select id="r2-pm-award"><option value="" selected disabled>— choose —</option><option value="approve">Approve as pitched</option><option value="condition">Attach a condition (trade –1♥ for +1●)</option></select>
           </div>
-          <button class="primary" onclick="lockTeam(2,'postdoc')">Lock In</button>
+          <button id="genbtn9" class="primary">Lock In</button>
         </div>
 
         <div class="team-panel" id="r2-team-advisor">
@@ -376,7 +376,7 @@
               <option value="standard">Write a standard letter</option>
             </select>
           </div>
-          <button class="primary" onclick="lockTeam(2,'advisor')">Lock In</button>
+          <button id="genbtn10" class="primary">Lock In</button>
         </div>
 
         <div class="team-panel" id="r2-team-funding">
@@ -388,7 +388,7 @@
               <option value="deny">Deny career-development awards this round</option>
             </select>
           </div>
-          <button class="primary" onclick="lockTeam(2,'funding')">Lock In</button>
+          <button id="genbtn11" class="primary">Lock In</button>
         </div>
 
         <div class="team-panel" id="r2-team-hiring">
@@ -401,16 +401,16 @@
               <option value="weak">Recruit a weaker rival (3★, 0●)</option>
             </select>
           </div>
-          <button class="primary" onclick="lockTeam(2,'hiring')">Lock In</button>
+          <button id="genbtn12" class="primary">Lock In</button>
         </div>
 
       </div>
 
       <div class="resolve-box">
         <p class="status-line" id="r2status">0 of 5 teams have locked in.</p>
-        <button class="primary" id="r2resolveBtn" onclick="resolveRound2()" disabled>Resolve Round 2</button>
+        <button class="primary" id="r2resolveBtn" disabled>Resolve Round 2</button>
         <div class="outcome" id="r2outcome" style="display:none;"></div>
-        <div id="r2continueWrap" style="display:none; margin-top:10px;"><button class="primary" onclick="finishRound(3)">Continue to Round 3 →</button></div>
+        <div id="r2continueWrap" style="display:none; margin-top:10px;"><button id="genbtn13" class="primary">Continue to Round 3 →</button></div>
       </div>
     </div>
 
@@ -419,18 +419,18 @@
       <p class="round-intro">Last round of independent moves — then the sealed material from Rounds 1 and 2 finally opens.</p>
 
       <div class="teamtabs">
-        <button class="team-tab active" id="r3-tab-candidate" onclick="selectTeam(3,'candidate')">Candidate</button>
-        <button class="team-tab" id="r3-tab-advisor" onclick="selectTeam(3,'advisor')">PhD Advisor</button>
-        <button class="team-tab" id="r3-tab-postdoc" onclick="selectTeam(3,'postdoc')">Postdoc Mentor</button>
-        <button class="team-tab" id="r3-tab-funding" onclick="selectTeam(3,'funding')">Funding Panel</button>
-        <button class="team-tab" id="r3-tab-hiring" onclick="selectTeam(3,'hiring')">Hiring Committee</button>
+        <button class="team-tab active" id="r3-tab-candidate">Candidate</button>
+        <button class="team-tab" id="r3-tab-advisor">PhD Advisor</button>
+        <button class="team-tab" id="r3-tab-postdoc">Postdoc Mentor</button>
+        <button class="team-tab" id="r3-tab-funding">Funding Panel</button>
+        <button class="team-tab" id="r3-tab-hiring">Hiring Committee</button>
       </div>
       <div class="team-panels">
 
         <div class="team-panel active" id="r3-team-candidate">
           <h4>Submit</h4>
           <p class="hint">Nothing left to decide — just confirm the applications are in.</p>
-          <button class="primary" onclick="lockTeam(3,'candidate')">Lock In (Submit Applications)</button>
+          <button id="genbtn14" class="primary">Lock In (Submit Applications)</button>
         </div>
 
         <div class="team-panel" id="r3-team-advisor">
@@ -442,7 +442,7 @@
               <option value="none">Stay out of it</option>
             </select>
           </div>
-          <button class="primary" onclick="lockTeam(3,'advisor')">Lock In</button>
+          <button id="genbtn15" class="primary">Lock In</button>
         </div>
 
         <div class="team-panel" id="r3-team-postdoc">
@@ -454,7 +454,7 @@
               <option value="none">Stay neutral</option>
             </select>
           </div>
-          <button class="primary" onclick="lockTeam(3,'postdoc')">Lock In</button>
+          <button id="genbtn16" class="primary">Lock In</button>
         </div>
 
         <div class="team-panel" id="r3-team-funding">
@@ -466,7 +466,7 @@
               <option value="no">No supplemental funds</option>
             </select>
           </div>
-          <button class="primary" onclick="lockTeam(3,'funding')">Lock In</button>
+          <button id="genbtn17" class="primary">Lock In</button>
         </div>
 
         <div class="team-panel" id="r3-team-hiring">
@@ -478,21 +478,21 @@
               <option value="virtual">Virtual interview only</option>
             </select>
           </div>
-          <button class="primary" onclick="lockTeam(3,'hiring')">Lock In</button>
+          <button id="genbtn18" class="primary">Lock In</button>
         </div>
 
       </div>
 
       <div class="resolve-box">
         <p class="status-line" id="r3status">0 of 5 teams have locked in.</p>
-        <button class="primary" id="r3resolveBtn" onclick="resolveRound3()" disabled>Reveal & Resolve Round 3</button>
+        <button class="primary" id="r3resolveBtn" disabled>Reveal & Resolve Round 3</button>
         <div class="outcome" id="r3outcome" style="display:none;"></div>
         <div class="envelope" id="r3envelope" style="display:none;"></div>
         <div id="r3decideWrap" style="display:none; margin-top:14px;">
           <h4>The Hiring Committee: decide</h4>
           <div class="btnrow">
-            <button class="primary" onclick="r3decide(true)">Hire Maya</button>
-            <button class="primary" onclick="r3decide(false)">Hire the rival candidate</button>
+            <button id="genbtn19" class="primary">Hire Maya</button>
+            <button id="genbtn20" class="primary">Hire the rival candidate</button>
           </div>
           <div class="outcome" id="r3decideoutcome" style="display:none;"></div>
         </div>
@@ -519,7 +519,7 @@
     <h2>Maya reaches burnout</h2>
     <p>Her Wellbeing hit zero. She steps back from the tenure track — not because the science stopped being good, but because the system asked too much for too long.</p>
     <p>This is not a hypothetical: academic attrition is real. Scroll down and discuss it as a class.</p>
-    <button class="primary" onclick="resetGame()">Reset Game</button>
+    <button id="genbtn21" class="primary">Reset Game</button>
   </div>
 </div>
 
@@ -751,6 +751,51 @@ function resetGame(){
   document.querySelectorAll('#r3decideWrap .btnrow button').forEach(b => b.disabled = false);
 }
 
+function initListeners(){
+  document.getElementById('genbtn1').addEventListener('click', function(){ resetGame(); });
+  document.getElementById('tabBtn1').addEventListener('click', function(){ switchTab(1); });
+  document.getElementById('tabBtn2').addEventListener('click', function(){ switchTab(2); });
+  document.getElementById('tabBtn3').addEventListener('click', function(){ switchTab(3); });
+  document.getElementById('r1-tab-candidate').addEventListener('click', function(){ selectTeam(1,'candidate'); });
+  document.getElementById('r1-tab-advisor').addEventListener('click', function(){ selectTeam(1,'advisor'); });
+  document.getElementById('r1-tab-postdoc').addEventListener('click', function(){ selectTeam(1,'postdoc'); });
+  document.getElementById('r1-tab-funding').addEventListener('click', function(){ selectTeam(1,'funding'); });
+  document.getElementById('r1-tab-hiring').addEventListener('click', function(){ selectTeam(1,'hiring'); });
+  document.getElementById('genbtn2').addEventListener('click', function(){ lockTeam(1,'candidate'); });
+  document.getElementById('genbtn3').addEventListener('click', function(){ lockTeam(1,'advisor'); });
+  document.getElementById('genbtn4').addEventListener('click', function(){ lockTeam(1,'postdoc'); });
+  document.getElementById('genbtn5').addEventListener('click', function(){ lockTeam(1,'funding'); });
+  document.getElementById('genbtn6').addEventListener('click', function(){ lockTeam(1,'hiring'); });
+  document.getElementById('r1resolveBtn').addEventListener('click', function(){ resolveRound1(); });
+  document.getElementById('genbtn7').addEventListener('click', function(){ finishRound(2); });
+  document.getElementById('r2-tab-candidate').addEventListener('click', function(){ selectTeam(2,'candidate'); });
+  document.getElementById('r2-tab-advisor').addEventListener('click', function(){ selectTeam(2,'advisor'); });
+  document.getElementById('r2-tab-postdoc').addEventListener('click', function(){ selectTeam(2,'postdoc'); });
+  document.getElementById('r2-tab-funding').addEventListener('click', function(){ selectTeam(2,'funding'); });
+  document.getElementById('r2-tab-hiring').addEventListener('click', function(){ selectTeam(2,'hiring'); });
+  document.getElementById('genbtn8').addEventListener('click', function(){ lockTeam(2,'candidate'); });
+  document.getElementById('genbtn9').addEventListener('click', function(){ lockTeam(2,'postdoc'); });
+  document.getElementById('genbtn10').addEventListener('click', function(){ lockTeam(2,'advisor'); });
+  document.getElementById('genbtn11').addEventListener('click', function(){ lockTeam(2,'funding'); });
+  document.getElementById('genbtn12').addEventListener('click', function(){ lockTeam(2,'hiring'); });
+  document.getElementById('r2resolveBtn').addEventListener('click', function(){ resolveRound2(); });
+  document.getElementById('genbtn13').addEventListener('click', function(){ finishRound(3); });
+  document.getElementById('r3-tab-candidate').addEventListener('click', function(){ selectTeam(3,'candidate'); });
+  document.getElementById('r3-tab-advisor').addEventListener('click', function(){ selectTeam(3,'advisor'); });
+  document.getElementById('r3-tab-postdoc').addEventListener('click', function(){ selectTeam(3,'postdoc'); });
+  document.getElementById('r3-tab-funding').addEventListener('click', function(){ selectTeam(3,'funding'); });
+  document.getElementById('r3-tab-hiring').addEventListener('click', function(){ selectTeam(3,'hiring'); });
+  document.getElementById('genbtn14').addEventListener('click', function(){ lockTeam(3,'candidate'); });
+  document.getElementById('genbtn15').addEventListener('click', function(){ lockTeam(3,'advisor'); });
+  document.getElementById('genbtn16').addEventListener('click', function(){ lockTeam(3,'postdoc'); });
+  document.getElementById('genbtn17').addEventListener('click', function(){ lockTeam(3,'funding'); });
+  document.getElementById('genbtn18').addEventListener('click', function(){ lockTeam(3,'hiring'); });
+  document.getElementById('r3resolveBtn').addEventListener('click', function(){ resolveRound3(); });
+  document.getElementById('genbtn19').addEventListener('click', function(){ r3decide(true); });
+  document.getElementById('genbtn20').addEventListener('click', function(){ r3decide(false); });
+  document.getElementById('genbtn21').addEventListener('click', function(){ resetGame(); });
+}
+initListeners();
 render();
 </script>
 </body>
