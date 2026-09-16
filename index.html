@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Tenure-Track Relay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1D2A35;
+    --paper:#EEF1EE;
+    --paper-dim:#E2E6E1;
+    --rule:#C7CCC5;
+    --flame:#C98A2B;
+    --advisor:#2F6F6B;
+    --postdoc:#6B4C6B;
+    --funding:#3B5B7A;
+    --hiring:#A64B3E;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    line-height:1.5;
+  }
+  h1,h2,h3{
+    font-family:'Source Serif 4',Georgia,serif;
+    font-weight:700;
+    margin:0 0 .3em 0;
+  }
+  .wrap{max-width:880px; margin:0 auto; padding:24px 24px 90px;}
+
+  .statbar{
+    position:sticky; top:0; z-index:10;
+    background:var(--ink); color:#fff;
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:8px 20px;
+    padding:10px 24px;
+    font-size:.95rem;
+  }
+  .statbar .stats{display:flex; gap:22px; flex-wrap:wrap;}
+  .statbar b{font-family:'Source Serif 4',serif; font-size:1.15rem;}
+  .flagbadge{
+    background:var(--flame); color:var(--ink); font-weight:600;
+    padding:2px 10px; font-size:.8rem; display:none;
+  }
+  .flagbadge.on{display:inline-block;}
+  .resetbtn{
+    border:1px solid #fff; background:transparent; color:#fff;
+    padding:6px 14px; font-family:'Inter'; font-weight:600; font-size:.82rem; cursor:pointer;
+  }
+  .resetbtn:hover{background:#fff; color:var(--ink);}
+
+  header{padding:30px 0 22px; border-bottom:3px solid var(--ink); margin-bottom:28px;}
+  header h1{font-size:2.3rem; letter-spacing:-0.01em;}
+  header p{font-size:1.05rem; max-width:64ch; margin:.4em 0 0;}
+
+  section{margin:40px 0;}
+  section > h2{font-size:1.4rem; border-bottom:1px solid var(--rule); padding-bottom:8px; margin-bottom:16px;}
+
+  .timeline{display:flex; width:100%; height:50px; border:1px solid var(--ink); font-size:.8rem; margin-bottom:6px;}
+  .timeline div{display:flex; align-items:center; justify-content:center; text-align:center; color:#fff; padding:4px; border-right:1px solid var(--paper);}
+  .timeline div:last-child{border-right:none;}
+  .timeline .setup{background:#4A5A63; flex:5;}
+  .timeline .r1{background:var(--advisor); flex:15;}
+  .timeline .r2{background:var(--postdoc); flex:15;}
+  .timeline .r3{background:var(--hiring); flex:15;}
+  .timeline .debrief{background:var(--flame); flex:10;}
+
+  .teams{display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:16px;}
+  .team{border-left:5px solid var(--c, var(--ink)); background:var(--paper-dim); padding:14px 16px;}
+  .team h3{font-size:1.08rem; margin-bottom:2px;}
+  .team .role{font-size:.82rem; font-style:italic; margin-bottom:.5em; color:#44514a;}
+  .team ul{margin:.3em 0 0; padding-left:1.1em; font-size:.9rem;}
+  .team li{margin:.2em 0;}
+  .team.candidate{--c:var(--flame);}
+  .team.advisor{--c:var(--advisor);}
+  .team.postdoc{--c:var(--postdoc);}
+  .team.funding{--c:var(--funding);}
+  .team.hiring{--c:var(--hiring);}
+
+  .tabs{display:flex; gap:4px; flex-wrap:wrap; border-bottom:3px solid var(--ink);}
+  .tab{
+    border:1px solid var(--ink); border-bottom:none;
+    background:var(--paper-dim); color:var(--ink);
+    padding:10px 18px; font-family:'Source Serif 4',serif; font-weight:700; font-size:1.02rem;
+    cursor:pointer; position:relative; top:1px;
+  }
+  .tab.active{background:var(--ink); color:#fff;}
+  .tab[data-round="1"].active{background:var(--advisor);}
+  .tab[data-round="2"].active{background:var(--postdoc);}
+  .tab[data-round="3"].active{background:var(--hiring);}
+  .tab:disabled{opacity:.4; cursor:not-allowed;}
+
+  .round-panel{display:none; border:1px solid var(--ink); border-top:none; padding:20px 22px; background:#fff;}
+  .round-panel.active{display:block;}
+  .round-intro{font-size:.92rem; color:#44514a; margin:0 0 16px;}
+
+  .teamtabs{display:flex; gap:4px; flex-wrap:wrap; margin:0 0 0;}
+  .team-tab{
+    border:1px solid var(--ink); background:#fff; color:var(--ink);
+    padding:7px 14px; font-family:'Inter'; font-weight:600; font-size:.82rem; cursor:pointer;
+  }
+  .team-tab.active{background:var(--paper-dim);}
+  .team-tab.locked{background:var(--advisor); color:#fff; border-color:var(--advisor);}
+  .team-tab.locked::after{content:" \\2713";}
+
+  .team-panels{border:1px solid var(--rule); border-top:none; padding:16px 18px; margin-bottom:14px;}
+  .team-panel{display:none;}
+  .team-panel.active{display:block;}
+  .team-panel h4{margin:0 0 4px;}
+  .team-panel p.hint{font-size:.86rem; color:#44514a; margin:.2em 0 .8em;}
+  .field{margin-bottom:12px;}
+  .field label{display:block; font-size:.88rem; margin:0 0 4px; font-weight:600;}
+  .field select{
+    width:100%; max-width:480px; padding:7px 10px; font-family:'Inter'; font-size:.92rem;
+    border:1px solid var(--ink); background:#fff; color:var(--ink);
+  }
+
+  .status-line{font-size:.85rem; color:#44514a; margin:0 0 10px;}
+  .resolve-box{background:var(--paper-dim); border:1px solid var(--ink); padding:16px 18px;}
+
+  button.primary{
+    border:1px solid var(--ink); background:var(--ink); color:#fff;
+    padding:9px 18px; font-family:'Inter'; font-weight:600; font-size:.92rem; cursor:pointer;
+  }
+  button.primary:hover{opacity:.88;}
+  button.primary:disabled{opacity:.35; cursor:default;}
+  .btnrow{display:flex; gap:10px; flex-wrap:wrap;}
+
+  .outcome{margin-top:10px; padding:10px 14px; background:#F5EFE1; border-left:3px solid var(--flame); font-size:.92rem;}
+
+  .envelope{background:#FBEFEC; border:1px solid var(--hiring); padding:14px 18px; font-size:.94rem; margin-top:10px;}
+  .envelope b{color:var(--hiring);}
+  .rival{margin-top:10px; font-size:.9rem; background:var(--paper-dim); padding:8px 12px;}
+
+  .gameover{
+    display:none; position:fixed; inset:0; background:rgba(29,42,53,.92); color:#fff;
+    align-items:center; justify-content:center; z-index:50; text-align:center; padding:30px;
+  }
+  .gameover.show{display:flex;}
+  .gameover-card{max-width:520px;}
+  .gameover-card h2{color:#fff; border:none;}
+  .gameover-card button{margin-top:16px;}
+
+  .debrief ol{padding-left:1.3em;}
+  .debrief li{margin:.5em 0;}
+</style>
+</head>
+<body>
+
+<div class="statbar">
+  <div class="stats">
+    <div>★ Publications: <b id="statPubs">0</b></div>
+    <div>● Network: <b id="statNetwork">0</b></div>
+    <div>♥ Wellbeing: <b id="statWellbeing">5</b></div>
+    <span class="flagbadge" id="flagBadge">Independent-PI</span>
+  </div>
+  <button class="resetbtn" onclick="resetGame()">Reset Game</button>
+</div>
+
+<div class="wrap">
+
+  <header>
+    <h1>The Tenure-Track Relay</h1>
+    <p>Five teams carry one chemistry PhD student — Maya — through grad school, a postdoc, and the R1 job market. Every round, all five teams work at once, in their own breakout rooms, each making a call without seeing what the others are doing — then the whole class reveals and resolves the round together.</p>
+  </header>
+
+  <section>
+    <h2>The hour, at a glance</h2>
+    <div class="timeline">
+      <div class="setup">Setup<br>5 min</div>
+      <div class="r1">Round 1 · Grad School<br>15 min</div>
+      <div class="r2">Round 2 · Postdoc<br>15 min</div>
+      <div class="r3">Round 3 · Job Market<br>15 min</div>
+      <div class="debrief">Discussion<br>10 min</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The five teams</h2>
+    <div class="teams">
+      <div class="team candidate">
+        <h3>The Candidate</h3>
+        <div class="role">plays Maya</div>
+        <ul>
+          <li>Makes Maya's real move each round</li>
+          <li>Wants a tenure-track offer without her Wellbeing hitting zero</li>
+        </ul>
+      </div>
+      <div class="team advisor">
+        <h3>The PhD Advisor</h3>
+        <div class="role">busy every round</div>
+        <ul>
+          <li>Sets a standing reaction policy in Round 1, writes Maya's letter in Round 2, makes a final move in Round 3</li>
+          <li>Wants high lab output — her success is a means to that end</li>
+        </ul>
+      </div>
+      <div class="team postdoc">
+        <h3>The Postdoc Mentor</h3>
+        <div class="role">busy every round</div>
+        <ul>
+          <li>Sets a mentoring style in Round 1, reacts to Maya's move in Round 2, makes a final move in Round 3</li>
+          <li>Wants her work to benefit their own lab — her independence is a cost to them</li>
+        </ul>
+      </div>
+      <div class="team funding">
+        <h3>The Funding Panel</h3>
+        <div class="role">busy every round</div>
+        <ul>
+          <li>Sets that round's approval policy before knowing if it'll even be used</li>
+          <li>Wants to fund real merit — Maya can be turned down</li>
+        </ul>
+      </div>
+      <div class="team hiring">
+        <h3>The Hiring Committee</h3>
+        <div class="role">busy every round</div>
+        <ul>
+          <li>Drafts sealed hiring criteria in Round 1, builds a rival candidate in Round 2, makes the final call in Round 3</li>
+          <li>Wants the best fit for the job as they've actually defined it</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Play</h2>
+    <div class="tabs">
+      <button class="tab active" data-round="1" id="tabBtn1" onclick="switchTab(1)">Round 1 · Grad School</button>
+      <button class="tab" data-round="2" id="tabBtn2" onclick="switchTab(2)" disabled>Round 2 · Postdoc</button>
+      <button class="tab" data-round="3" id="tabBtn3" onclick="switchTab(3)" disabled>Round 3 · Job Market</button>
+    </div>
+
+    <!-- ROUND 1 -->
+    <div class="round-panel active" id="round1panel">
+      <p class="round-intro">Every team works in its own tab below, at the same time. Nobody can see another team's screen. Once all five have locked in, resolve the round together.</p>
+
+      <div class="teamtabs">
+        <button class="team-tab active" id="r1-tab-candidate" onclick="selectTeam(1,'candidate')">Candidate</button>
+        <button class="team-tab" id="r1-tab-advisor" onclick="selectTeam(1,'advisor')">PhD Advisor</button>
+        <button class="team-tab" id="r1-tab-postdoc" onclick="selectTeam(1,'postdoc')">Postdoc Mentor</button>
+        <button class="team-tab" id="r1-tab-funding" onclick="selectTeam(1,'funding')">Funding Panel</button>
+        <button class="team-tab" id="r1-tab-hiring" onclick="selectTeam(1,'hiring')">Hiring Committee</button>
+      </div>
+      <div class="team-panels">
+
+        <div class="team-panel active" id="r1-team-candidate">
+          <h4>Choose Maya's move</h4>
+          <p class="hint">The other teams can't see this pick yet.</p>
+          <div class="field">
+            <select id="r1-candidateAction">
+              <option value="" selected disabled>— choose one —</option>
+              <option value="risky">Chase a bold, high-risk project (+2★, –1♥)</option>
+              <option value="safe">Grind a safe, incremental project (+1★)</option>
+              <option value="fellowship">Apply for a training fellowship (Funding Panel decides; –1♥ either way)</option>
+            </select>
+          </div>
+          <button class="primary" onclick="lockTeam(1,'candidate')">Lock In</button>
+        </div>
+
+        <div class="team-panel" id="r1-team-advisor">
+          <h4>Set your standing policy</h4>
+          <p class="hint">You won't see Maya's pick until the reveal — decide now how you'll react to each possibility.</p>
+          <div class="field"><label>If she chases the risky project:</label>
+            <select id="r1-adv-risky"><option value="" selected disabled>— choose —</option><option value="approve">Approve as pitched</option><option value="condition">Attach a condition (–1♥ for +1★)</option></select>
+          </div>
+          <div class="field"><label>If she plays it safe:</label>
+            <select id="r1-adv-safe"><option value="" selected disabled>— choose —</option><option value="approve">Approve as pitched</option><option value="condition">Attach a condition (–1♥ for +1★)</option></select>
+          </div>
+          <div class="field"><label>If she applies for the fellowship:</label>
+            <select id="r1-adv-fellowship"><option value="" selected disabled>— choose —</option><option value="approve">Approve as pitched</option><option value="condition">Attach a condition (–1♥ for +1★)</option></select>
+          </div>
+          <button class="primary" onclick="lockTeam(1,'advisor')">Lock In</button>
+        </div>
+
+        <div class="team-panel" id="r1-team-postdoc">
+          <h4>Set your mentoring style, ahead of Round 2</h4>
+          <p class="hint">You're not active yet — but this choice shapes your options next round.</p>
+          <div class="field">
+            <select id="r1-postdocStyle">
+              <option value="" selected disabled>— choose —</option>
+              <option value="generous">Generous — I invest in people even when it costs me</option>
+              <option value="demanding">Demanding — my lab's output comes first</option>
+            </select>
+          </div>
+          <button class="primary" onclick="lockTeam(1,'postdoc')">Lock In</button>
+        </div>
+
+        <div class="team-panel" id="r1-team-funding">
+          <h4>Set this round's policy</h4>
+          <p class="hint">Decide now whether you'll approve a fellowship request — you won't know if Maya actually applies for one.</p>
+          <div class="field">
+            <select id="r1-fundingPolicy">
+              <option value="" selected disabled>— choose —</option>
+              <option value="approve">Approve fellowship requests this round</option>
+              <option value="deny">Deny fellowship requests this round</option>
+            </select>
+          </div>
+          <button class="primary" onclick="lockTeam(1,'funding')">Lock In</button>
+        </div>
+
+        <div class="team-panel" id="r1-team-hiring">
+          <h4>Draft your real hiring criteria</h4>
+          <p class="hint">Sealed until Round 3 — this is what you'll actually judge candidates on.</p>
+          <div class="field">
+            <select id="r1-hiringCriteria">
+              <option value="" selected disabled>— choose —</option>
+              <option value="vision">Prioritize independent research vision & funding record</option>
+              <option value="output">Prioritize raw publication output</option>
+            </select>
+          </div>
+          <button class="primary" onclick="lockTeam(1,'hiring')">Lock In</button>
+        </div>
+
+      </div>
+
+      <div class="resolve-box">
+        <p class="status-line" id="r1status">0 of 5 teams have locked in.</p>
+        <button class="primary" id="r1resolveBtn" onclick="resolveRound1()" disabled>Resolve Round 1</button>
+        <div class="outcome" id="r1outcome" style="display:none;"></div>
+        <div id="r1continueWrap" style="display:none; margin-top:10px;"><button class="primary" onclick="finishRound(2)">Continue to Round 2 →</button></div>
+      </div>
+    </div>
+
+    <!-- ROUND 2 -->
+    <div class="round-panel" id="round2panel">
+      <p class="round-intro">Same as before — everyone locks in independently, then the class resolves together.</p>
+
+      <div class="teamtabs">
+        <button class="team-tab active" id="r2-tab-candidate" onclick="selectTeam(2,'candidate')">Candidate</button>
+        <button class="team-tab" id="r2-tab-advisor" onclick="selectTeam(2,'advisor')">PhD Advisor</button>
+        <button class="team-tab" id="r2-tab-postdoc" onclick="selectTeam(2,'postdoc')">Postdoc Mentor</button>
+        <button class="team-tab" id="r2-tab-funding" onclick="selectTeam(2,'funding')">Funding Panel</button>
+        <button class="team-tab" id="r2-tab-hiring" onclick="selectTeam(2,'hiring')">Hiring Committee</button>
+      </div>
+      <div class="team-panels">
+
+        <div class="team-panel active" id="r2-team-candidate">
+          <h4>Choose Maya's move</h4>
+          <div class="field">
+            <select id="r2-candidateAction">
+              <option value="" selected disabled>— choose one —</option>
+              <option value="niche">Build an independent research niche (+1●, –1♥, Independent-PI flag)</option>
+              <option value="area">Stay in the mentor's established area (+2★, no flag)</option>
+              <option value="award">Apply for a career-development award (Funding Panel decides; –1♥ either way)</option>
+            </select>
+          </div>
+          <button class="primary" onclick="lockTeam(2,'candidate')">Lock In</button>
+        </div>
+
+        <div class="team-panel" id="r2-team-postdoc">
+          <h4>Set your standing policy</h4>
+          <p class="hint">Same idea as the Advisor in Round 1 — react in advance to each of Maya's possible moves.</p>
+          <div class="field"><label>If she builds an independent niche:</label>
+            <select id="r2-pm-niche"><option value="" selected disabled>— choose —</option><option value="approve">Approve as pitched</option><option value="condition">Attach a condition (trade –1♥ for +1●)</option></select>
+          </div>
+          <div class="field"><label>If she stays in your established area:</label>
+            <select id="r2-pm-area"><option value="" selected disabled>— choose —</option><option value="approve">Approve as pitched</option><option value="condition">Attach a condition (trade –1♥ for +1●)</option></select>
+          </div>
+          <div class="field"><label>If she applies for the career award:</label>
+            <select id="r2-pm-award"><option value="" selected disabled>— choose —</option><option value="approve">Approve as pitched</option><option value="condition">Attach a condition (trade –1♥ for +1●)</option></select>
+          </div>
+          <button class="primary" onclick="lockTeam(2,'postdoc')">Lock In</button>
+        </div>
+
+        <div class="team-panel" id="r2-team-advisor">
+          <h4>Write Maya's recommendation letter</h4>
+          <p class="hint">You're off duty this round — but this choice pays off (or doesn't) in Round 3.</p>
+          <div class="field">
+            <select id="r2-advisorLetter">
+              <option value="" selected disabled>— choose —</option>
+              <option value="glowing">Write a glowing letter</option>
+              <option value="standard">Write a standard letter</option>
+            </select>
+          </div>
+          <button class="primary" onclick="lockTeam(2,'advisor')">Lock In</button>
+        </div>
+
+        <div class="team-panel" id="r2-team-funding">
+          <h4>Set this round's policy</h4>
+          <div class="field">
+            <select id="r2-fundingPolicy">
+              <option value="" selected disabled>— choose —</option>
+              <option value="approve">Approve career-development awards this round</option>
+              <option value="deny">Deny career-development awards this round</option>
+            </select>
+          </div>
+          <button class="primary" onclick="lockTeam(2,'funding')">Lock In</button>
+        </div>
+
+        <div class="team-panel" id="r2-team-hiring">
+          <h4>Build the rival candidate</h4>
+          <p class="hint">Still sealed — this decides who Maya is actually up against in Round 3.</p>
+          <div class="field">
+            <select id="r2-rivalStrength">
+              <option value="" selected disabled>— choose —</option>
+              <option value="strong">Recruit a strong rival (5★, 2●)</option>
+              <option value="weak">Recruit a weaker rival (3★, 0●)</option>
+            </select>
+          </div>
+          <button class="primary" onclick="lockTeam(2,'hiring')">Lock In</button>
+        </div>
+
+      </div>
+
+      <div class="resolve-box">
+        <p class="status-line" id="r2status">0 of 5 teams have locked in.</p>
+        <button class="primary" id="r2resolveBtn" onclick="resolveRound2()" disabled>Resolve Round 2</button>
+        <div class="outcome" id="r2outcome" style="display:none;"></div>
+        <div id="r2continueWrap" style="display:none; margin-top:10px;"><button class="primary" onclick="finishRound(3)">Continue to Round 3 →</button></div>
+      </div>
+    </div>
+
+    <!-- ROUND 3 -->
+    <div class="round-panel" id="round3panel">
+      <p class="round-intro">Last round of independent moves — then the sealed material from Rounds 1 and 2 finally opens.</p>
+
+      <div class="teamtabs">
+        <button class="team-tab active" id="r3-tab-candidate" onclick="selectTeam(3,'candidate')">Candidate</button>
+        <button class="team-tab" id="r3-tab-advisor" onclick="selectTeam(3,'advisor')">PhD Advisor</button>
+        <button class="team-tab" id="r3-tab-postdoc" onclick="selectTeam(3,'postdoc')">Postdoc Mentor</button>
+        <button class="team-tab" id="r3-tab-funding" onclick="selectTeam(3,'funding')">Funding Panel</button>
+        <button class="team-tab" id="r3-tab-hiring" onclick="selectTeam(3,'hiring')">Hiring Committee</button>
+      </div>
+      <div class="team-panels">
+
+        <div class="team-panel active" id="r3-team-candidate">
+          <h4>Submit</h4>
+          <p class="hint">Nothing left to decide — just confirm the applications are in.</p>
+          <button class="primary" onclick="lockTeam(3,'candidate')">Lock In (Submit Applications)</button>
+        </div>
+
+        <div class="team-panel" id="r3-team-advisor">
+          <h4>One last move</h4>
+          <div class="field">
+            <select id="r3-advisorCall">
+              <option value="" selected disabled>— choose —</option>
+              <option value="call">Call the search chair personally (+1●)</option>
+              <option value="none">Stay out of it</option>
+            </select>
+          </div>
+          <button class="primary" onclick="lockTeam(3,'advisor')">Lock In</button>
+        </div>
+
+        <div class="team-panel" id="r3-team-postdoc">
+          <h4>One last move</h4>
+          <div class="field">
+            <select id="r3-mentorAdvocate">
+              <option value="" selected disabled>— choose —</option>
+              <option value="advocate">Advocate for her publicly at a conference (+1●)</option>
+              <option value="none">Stay neutral</option>
+            </select>
+          </div>
+          <button class="primary" onclick="lockTeam(3,'postdoc')">Lock In</button>
+        </div>
+
+        <div class="team-panel" id="r3-team-funding">
+          <h4>Commit — or don't — to a start-up package</h4>
+          <div class="field">
+            <select id="r3-fundingSupplement">
+              <option value="" selected disabled>— choose —</option>
+              <option value="yes">Back a start-up supplement if she's hired</option>
+              <option value="no">No supplemental funds</option>
+            </select>
+          </div>
+          <button class="primary" onclick="lockTeam(3,'funding')">Lock In</button>
+        </div>
+
+        <div class="team-panel" id="r3-team-hiring">
+          <h4>Set the interview format</h4>
+          <div class="field">
+            <select id="r3-interviewFormat">
+              <option value="" selected disabled>— choose —</option>
+              <option value="oncampus">Full on-campus interview (+1● impression)</option>
+              <option value="virtual">Virtual interview only</option>
+            </select>
+          </div>
+          <button class="primary" onclick="lockTeam(3,'hiring')">Lock In</button>
+        </div>
+
+      </div>
+
+      <div class="resolve-box">
+        <p class="status-line" id="r3status">0 of 5 teams have locked in.</p>
+        <button class="primary" id="r3resolveBtn" onclick="resolveRound3()" disabled>Reveal & Resolve Round 3</button>
+        <div class="outcome" id="r3outcome" style="display:none;"></div>
+        <div class="envelope" id="r3envelope" style="display:none;"></div>
+        <div id="r3decideWrap" style="display:none; margin-top:14px;">
+          <h4>The Hiring Committee: decide</h4>
+          <div class="btnrow">
+            <button class="primary" onclick="r3decide(true)">Hire Maya</button>
+            <button class="primary" onclick="r3decide(false)">Hire the rival candidate</button>
+          </div>
+          <div class="outcome" id="r3decideoutcome" style="display:none;"></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="debrief">
+    <h2>Now discuss, as a class</h2>
+    <ol>
+      <li>Where did merit stop mattering as much as timing or a mentor's mood?</li>
+      <li>Which team's goal most directly conflicted with Maya's? Did you notice it happening as you played?</li>
+      <li>Did the Hiring Committee's real criteria match what Round 1 and 2 actually rewarded?</li>
+      <li>If the Funding Panel had denied every request, how differently would the game have gone?</li>
+      <li>Whose incentives would you redesign — and how — to make this system work better for the trainee, the science, or both?</li>
+    </ol>
+  </section>
+
+</div>
+
+<div class="gameover" id="gameover">
+  <div class="gameover-card">
+    <h2>Maya reaches burnout</h2>
+    <p>Her Wellbeing hit zero. She steps back from the tenure track — not because the science stopped being good, but because the system asked too much for too long.</p>
+    <p>This is not a hypothetical: academic attrition is real. Scroll down and discuss it as a class.</p>
+    <button class="primary" onclick="resetGame()">Reset Game</button>
+  </div>
+</div>
+
+<script>
+let state = { pubs:0, network:0, wellbeing:5, r1ready:false };
+let flags = { postdocStyle:null, hiringCriteria:null, advisorLetter:null, rivalStrength:null };
+let locked = {
+  1:{candidate:false,advisor:false,postdoc:false,funding:false,hiring:false},
+  2:{candidate:false,advisor:false,postdoc:false,funding:false,hiring:false},
+  3:{candidate:false,advisor:false,postdoc:false,funding:false,hiring:false}
+};
+
+function render(){
+  document.getElementById('statPubs').textContent = state.pubs;
+  document.getElementById('statNetwork').textContent = state.network;
+  document.getElementById('statWellbeing').textContent = state.wellbeing;
+  document.getElementById('flagBadge').classList.toggle('on', state.r1ready);
+  checkWellbeing();
+}
+function checkWellbeing(){
+  if(state.wellbeing <= 0){
+    document.getElementById('gameover').classList.add('show');
+  }
+}
+
+function switchTab(n){
+  document.querySelectorAll('.round-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('round'+n+'panel').classList.add('active');
+  document.getElementById('tabBtn'+n).classList.add('active');
+}
+function finishRound(next){
+  document.getElementById('tabBtn'+next).disabled = false;
+  switchTab(next);
+}
+
+function selectTeam(round, team){
+  document.querySelectorAll('#round'+round+'panel .team-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#round'+round+'panel .team-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('r'+round+'-team-'+team).classList.add('active');
+  document.getElementById('r'+round+'-tab-'+team).classList.add('active');
+}
+
+function lockTeam(round, team){
+  const panel = document.getElementById('r'+round+'-team-'+team);
+  const selects = panel.querySelectorAll('select');
+  for(const s of selects){
+    if(s.value === ''){ alert('Please make a selection before locking in.'); return; }
+  }
+  locked[round][team] = true;
+  selects.forEach(s => s.disabled = true);
+  panel.querySelector('button.primary').disabled = true;
+  document.getElementById('r'+round+'-tab-'+team).classList.add('locked');
+  updateStatus(round);
+}
+function updateStatus(round){
+  const count = Object.values(locked[round]).filter(Boolean).length;
+  document.getElementById('r'+round+'status').textContent = count + ' of 5 teams have locked in.';
+  document.getElementById('r'+round+'resolveBtn').disabled = count < 5;
+}
+
+function resolveRound1(){
+  document.getElementById('r1resolveBtn').disabled = true;
+  let lines = [];
+  const action = document.getElementById('r1-candidateAction').value;
+
+  if(action === 'risky'){
+    state.pubs += 2; state.wellbeing -= 1;
+    lines.push('She goes all in on the risky project: +2★, –1♥.');
+  } else if(action === 'safe'){
+    state.pubs += 1;
+    lines.push('The incremental project lands: +1★.');
+  } else if(action === 'fellowship'){
+    const fp = document.getElementById('r1-fundingPolicy').value;
+    state.wellbeing -= 1;
+    if(fp === 'approve'){ state.pubs += 1; state.network += 1; lines.push('The Funding Panel had already decided to approve fellowship requests this round: +1★, +1●, –1♥.'); }
+    else { lines.push('The Funding Panel had already decided to deny fellowship requests this round: no boost, –1♥.'); }
+  }
+
+  const advPolicy = document.getElementById('r1-adv-'+action).value;
+  if(advPolicy === 'condition'){
+    state.wellbeing -= 1; state.pubs += 1;
+    lines.push("The Advisor's standing policy for this move was to attach a condition: –1♥, +1★.");
+  } else {
+    lines.push("The Advisor's standing policy for this move was to approve as pitched. No change.");
+  }
+
+  flags.postdocStyle = document.getElementById('r1-postdocStyle').value;
+  flags.hiringCriteria = document.getElementById('r1-hiringCriteria').value;
+
+  const scooped = Math.random() < 0.5;
+  if(scooped){
+    if(state.pubs > 0){ state.pubs -= 1; lines.push('Event: "Scooped" — a rival lab publishes first: –1★.'); }
+    else { lines.push('Event: "Scooped" — but there\'s nothing to lose yet. No change.'); }
+  } else {
+    state.network += 1;
+    lines.push('Event: "Great conference" — a well-timed talk pays off: +1●.');
+  }
+
+  render();
+  const out = document.getElementById('r1outcome');
+  out.style.display = 'block';
+  out.innerHTML = lines.join('<br>');
+  document.getElementById('r1continueWrap').style.display = 'block';
+}
+
+function resolveRound2(){
+  document.getElementById('r2resolveBtn').disabled = true;
+  let lines = [];
+  const action = document.getElementById('r2-candidateAction').value;
+
+  if(action === 'niche'){
+    state.network += 1; state.wellbeing -= 1; state.r1ready = true;
+    lines.push('She stakes out her own research direction: +1●, –1♥, and earns the Independent-PI flag.');
+  } else if(action === 'area'){
+    state.pubs += 2;
+    lines.push("Staying in the mentor's established area pays off: +2★. No Independent-PI flag.");
+  } else if(action === 'award'){
+    const fp = document.getElementById('r2-fundingPolicy').value;
+    state.wellbeing -= 1;
+    if(fp === 'approve'){ state.pubs += 1; state.r1ready = true; lines.push('The Funding Panel had already decided to approve career-development awards this round: +1★, Independent-PI flag, –1♥.'); }
+    else { lines.push('The Funding Panel had already decided to deny these awards this round: no boost, –1♥.'); }
+  }
+
+  const pmPolicy = document.getElementById('r2-pm-'+action).value;
+  const generous = flags.postdocStyle === 'generous';
+  if(pmPolicy === 'condition'){
+    const cost = generous ? 0 : 1;
+    state.wellbeing -= cost; state.network += 1;
+    lines.push("The Postdoc Mentor's standing policy was to attach a condition: +1●" + (generous ? " — their generous style meant no wellbeing cost." : " (–1♥)."));
+  } else {
+    if(generous){ state.network += 1; lines.push('The Postdoc Mentor approved it as pitched — their generous style earns Maya +1● anyway.'); }
+    else { lines.push("The Postdoc Mentor's standing policy was to approve as pitched. No change."); }
+  }
+
+  flags.advisorLetter = document.getElementById('r2-advisorLetter').value;
+  flags.rivalStrength = document.getElementById('r2-rivalStrength').value;
+
+  const flood = Math.random() < 0.5;
+  if(flood){ state.wellbeing -= 1; lines.push('Event: "Lab flood" — weeks lost cleaning up: –1♥.'); }
+  else { state.network += 1; lines.push('Event: "Media hit" — the work gets unexpected attention: +1●.'); }
+
+  render();
+  const out = document.getElementById('r2outcome');
+  out.style.display = 'block';
+  out.innerHTML = lines.join('<br>');
+  document.getElementById('r2continueWrap').style.display = 'block';
+}
+
+function resolveRound3(){
+  document.getElementById('r3resolveBtn').disabled = true;
+  let lines = [];
+
+  if(document.getElementById('r3-advisorCall').value === 'call'){ state.network += 1; lines.push('The PhD Advisor calls the search chair personally: +1●.'); }
+  if(document.getElementById('r3-mentorAdvocate').value === 'advocate'){ state.network += 1; lines.push('The Postdoc Mentor advocates for her publicly: +1●.'); }
+  if(flags.advisorLetter === 'glowing'){ state.network += 1; lines.push("Round 2's glowing letter finally lands: +1●."); }
+  if(document.getElementById('r3-interviewFormat').value === 'oncampus'){ state.network += 1; lines.push('A full on-campus interview leaves a strong impression: +1●.'); }
+
+  const supplement = document.getElementById('r3-fundingSupplement').value;
+  lines.push(supplement === 'yes' ? "The Funding Panel is ready to back a start-up supplement if she's hired." : 'The Funding Panel has not committed any supplemental funds.');
+
+  const budgetCut = Math.random() < 0.5;
+  if(budgetCut){
+    lines.push('Event: "Budget cuts" — the Committee will have to justify any hire with a large start-up package' + (supplement === 'yes' ? ", though the Funding Panel's backing helps." : '.'));
+  } else {
+    lines.push('Event: "Two-body problem" — Maya\'s applications are now geographically limited. The Committee may apply a penalty, or explicitly ignore it and say why.');
+  }
+
+  render();
+  const out = document.getElementById('r3outcome');
+  out.style.display = 'block';
+  out.innerHTML = lines.join('<br>');
+
+  const rival = flags.rivalStrength === 'strong' ? {pubs:5, network:2} : {pubs:3, network:0};
+  const criteriaText = flags.hiringCriteria === 'vision'
+    ? 'Prioritize independent research vision & funding record — treat ★ as a tiebreaker only.'
+    : 'Prioritize raw publication output above all else.';
+
+  const env = document.getElementById('r3envelope');
+  env.style.display = 'block';
+  env.innerHTML = '<b>Your own sealed criteria, set back in Round 1:</b> ' + criteriaText
+    + '<div class="rival"><b>The rival candidate you built in Round 2:</b> ' + rival.pubs + '★ &nbsp; ' + rival.network + '●</div>'
+    + '<div class="rival"><b>Maya\'s final profile:</b> ' + state.pubs + '★ &nbsp; ' + state.network + '● &nbsp; ' + state.wellbeing + '♥ &nbsp; '
+    + (state.r1ready ? '— holds the Independent-PI flag' : '— no Independent-PI flag') + '</div>';
+
+  document.getElementById('r3decideWrap').style.display = 'block';
+}
+
+function r3decide(hireMaya){
+  document.querySelectorAll('#r3decideWrap .btnrow button').forEach(b => b.disabled = true);
+  const out = document.getElementById('r3decideoutcome');
+  out.style.display = 'block';
+  out.innerHTML = hireMaya
+    ? '<b>Offer extended.</b> Maya accepts the tenure-track position.'
+    : "<b>The department hires the rival candidate.</b> Maya's postdoc continues — or she starts looking outside academia.";
+}
+
+function resetGame(){
+  state = { pubs:0, network:0, wellbeing:5, r1ready:false };
+  flags = { postdocStyle:null, hiringCriteria:null, advisorLetter:null, rivalStrength:null };
+  locked = {
+    1:{candidate:false,advisor:false,postdoc:false,funding:false,hiring:false},
+    2:{candidate:false,advisor:false,postdoc:false,funding:false,hiring:false},
+    3:{candidate:false,advisor:false,postdoc:false,funding:false,hiring:false}
+  };
+  render();
+  document.getElementById('gameover').classList.remove('show');
+
+  document.getElementById('tabBtn2').disabled = true;
+  document.getElementById('tabBtn3').disabled = true;
+  switchTab(1);
+
+  [1,2,3].forEach(r => {
+    document.querySelectorAll('#round'+r+'panel select').forEach(s => { s.value = ''; s.disabled = false; });
+    document.querySelectorAll('#round'+r+'panel .team-panel button.primary').forEach(b => b.disabled = false);
+    document.querySelectorAll('#round'+r+'panel .team-tab').forEach(t => t.classList.remove('locked'));
+    selectTeam(r, 'candidate');
+    document.getElementById('r'+r+'status').textContent = '0 of 5 teams have locked in.';
+    document.getElementById('r'+r+'resolveBtn').disabled = true;
+    const out = document.getElementById('r'+r+'outcome');
+    out.style.display = 'none'; out.innerHTML = '';
+  });
+
+  document.getElementById('r1continueWrap').style.display = 'none';
+  document.getElementById('r2continueWrap').style.display = 'none';
+  document.getElementById('r3envelope').style.display = 'none';
+  document.getElementById('r3decideWrap').style.display = 'none';
+  document.getElementById('r3decideoutcome').style.display = 'none';
+  document.querySelectorAll('#r3decideWrap .btnrow button').forEach(b => b.disabled = false);
+}
+
+render();
+</script>
+</body>
+</html>
